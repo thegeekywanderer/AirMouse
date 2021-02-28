@@ -52,3 +52,6 @@ pipeline_config.eval_input_reader[0].tf_record_input_reader.input_path[:] = [ANN
 config_text = text_format.MessageToString(pipeline_config)                                                                                                                                                                                                        
 with tf.io.gfile.GFile(CONFIG_PATH, "wb") as f:                                                                                                                                                                                                                     
     f.write(config_text)   
+
+print("""python {}/research/object_detection/model_main_tf2.py --model_dir={}/{} --pipeline_config_path={}/{}/pipeline.config --num_train_steps=5000""".format(APIMODEL_PATH, MODEL_PATH,CUSTOM_MODEL_NAME,MODEL_PATH,CUSTOM_MODEL_NAME))
+print("Copy the above command and run")
