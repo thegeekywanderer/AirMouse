@@ -1,0 +1,12 @@
+item { 
+	name:'single'
+	id:1
+}
+item { 
+	name:'double'
+	id:2
+}
+item { 
+	name:'pinch'
+	id:3
+}
