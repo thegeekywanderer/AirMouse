@@ -33,6 +33,7 @@ cd Air-mouse--gesture-control
    #### Install model of choice from Tensorflow Zoo (Only for training):
      Go to https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md
      Download model of choice
+     Single Shot Detector of MobileNet(320x320) is given in the pre-trained directory, however one can experiment on different models.
      Extract it to Air-mouse--gesture-control/pre-trained
      
   #### Install LabelImg for labelling custom dataset (Only for training):
