@@ -5,11 +5,13 @@ Control your mouse pointer with natural hand gestures trained on Single Shot Det
   * Keep pinched for moving the mouse around
   * Lift index finger for single click
   * Lift index and middle finger together for double click
- ![Alt Text](https://github.com/wolf-hash/Air-mouse--gesture-control/blob/main/screenshots/airmouse.gif)
+<br>
+<img src="https://github.com/wolf-hash/Air-mouse--gesture-control/blob/main/screenshots/airmouse.gif" width="850" height="400" />
  
  *Loss over the Training period*
- ![Alt Text](https://github.com/wolf-hash/Air-mouse--gesture-control/blob/main/screenshots/Loss.jpg)
+<img src="https://github.com/wolf-hash/Air-mouse--gesture-control/blob/main/screenshots/Loss.jpg" width="500" height="400" />
  
+
 ## Installation: 
 ```
 git clone https://github.com/wolf-hash/Air-mouse--gesture-control.git
