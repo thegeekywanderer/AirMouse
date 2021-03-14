@@ -21,8 +21,8 @@ parser = argparse.ArgumentParser(description='Configure runtime...')
 parser.add_argument('-v', '--visualize', type=str, default='y',
                     help='(y/n) Visualize the creation of boxes. Default = y')
 parser.add_argument('-t', '--threshold', type=float, default=0.34, 
-
                     help='Classification confidence threshold (0 to 1) Default=0.34')
+                    
 parser.add_argument('-a', '--annotations', type=str, default='annotations', 
                     help='Specify different path for label map annotations')
 parser.add_argument('-m', '--model', type=str, default='ssd_mobnet_320', 
