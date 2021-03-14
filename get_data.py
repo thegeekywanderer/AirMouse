@@ -19,7 +19,7 @@ def main():
         if(ret == True):
             # Resize and flip
             frame = imutils.resize(frame, width=700)
-            # frame = cv2.flip(frame, 1)
+            frame = cv2.flip(frame, 1)
 
             clone = frame.copy()
             
@@ -27,12 +27,12 @@ def main():
 
             roi = frame[top:bottom, right:left]
             cv2.imshow('hand nonblurred', roi)
-            frame = cv2.GaussianBlur(frame, (3, 3), 0)
+            frame = cv2.GaussianBlur(frame, (9, 9), 0)
 
             cv2.imshow('Blurred', frame)
             if start_recording and n_frame % 5 == 0:
                 print("writing")
-                cv2.imwrite("./dataset/pinch/Karan/pinch_" + str(n_image) + ".png", roi)
+                cv2.imwrite("./images/pinch_" + str(n_image) + ".png", roi)
                 n_image += 1
 
             cv2.rectangle(clone, (left, top), (right, bottom), (0, 255, 0), 2)
