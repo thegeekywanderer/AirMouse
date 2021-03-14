@@ -1,4 +1,6 @@
 import os
+
+from numpy.matrixlib import defmatrix
 import tensorflow as tf
 import cv2 
 import numpy as np
@@ -11,13 +13,35 @@ from object_detection.utils import config_util
 from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as viz_utils
 from object_detection.builders import model_builder
+import argparse
+
+
+# Argument Parser
+parser = argparse.ArgumentParser(description='Configure runtime...')
+parser.add_argument('-v', '--visualize', type=str, default='y',
+                    help='(y/n) Visualize the creation of boxes. Default = y')
+parser.add_argument('-t', '--threshold', type=float, default=0.34, 
+
+                    help='Classification confidence threshold (0 to 1) Default=0.34')
+parser.add_argument('-a', '--annotations', type=str, default='annotations', 
+                    help='Specify different path for label map annotations')
+parser.add_argument('-m', '--model', type=str, default='ssd_mobnet_320', 
+                    help='Specify different path for pretrained model')
+parser.add_argument('-c', '--checkpoint', type=str, default='models/ssd_mobnet_320', 
+                    help='Specify different path for trained checkpoint files')
+parser.add_argument('-p', '--pipeline', type=str, default='models/ssd_mobnet_320/pipeline.config', 
+                    help='Specify different path for pipeline.config file')
+
+args = parser.parse_args()
+conf_thresh = args.threshold
+vis_bool = args.visualize
+
 
 # Paths
-ANNOTATION_PATH = 'annotations'
-MODEL_PATH = 'models'
-CUSTOM_MODEL_NAME = 'ssd_mobnet_320' 
-CHECKPOINT_PATH = MODEL_PATH+'/ssd_mobnet_320/'
-CONFIG_PATH = MODEL_PATH+'/'+CUSTOM_MODEL_NAME+'/pipeline.config'
+ANNOTATION_PATH = args.annotations
+CUSTOM_MODEL_NAME = args.model 
+CHECKPOINT_PATH = args.checkpoint
+CONFIG_PATH = args.pipeline
 
 STANDARD_COLORS = [
     'AliceBlue', 'Chartreuse', 'Aqua', 'Aquamarine', 'Azure', 'Beige', 'Bisque',
@@ -45,19 +69,21 @@ STANDARD_COLORS = [
     'WhiteSmoke', 'Yellow', 'YellowGreen'
 ]
 
+
+
+# Rewriting tensorflow function to implement custom functionality
 def override_visualize_boxes_and_labels_on_image_array(
     image,
     boxes,
     classes,
     scores,
+    vis_bool,
     category_index,
     use_normalized_coordinates=False,
     max_boxes_to_draw=20,
     min_score_thresh=.5,
     agnostic_mode=False,
-    line_thickness=4,
-    mask_alpha=.4,
-    groundtruth_box_visualization_color='black'):
+    line_thickness=4):
     
     
     box_to_display_str_map = collections.defaultdict(list)
@@ -88,22 +114,25 @@ def override_visualize_boxes_and_labels_on_image_array(
                 box_to_color_map[box] = 'DarkOrange'
             else:
                 box_to_color_map[box] = STANDARD_COLORS[classes[i] % len(STANDARD_COLORS)]
-                
-    for box, color in box_to_color_map.items():
-        ymin, xmin, ymax, xmax = box
-        
-        viz_utils.draw_bounding_box_on_image_array(
-        image,
-        ymin,
-        xmin,
-        ymax,
-        xmax,
-        color=color,
-        thickness=line_thickness,
-        display_str_list=box_to_display_str_map[box],
-        use_normalized_coordinates=use_normalized_coordinates)
-    return box, class_name
 
+    if vis_bool == 'y':
+        for box, color in box_to_color_map.items():
+            ymin, xmin, ymax, xmax = box
+            
+            viz_utils.draw_bounding_box_on_image_array(
+            image,
+            ymin,
+            xmin,
+            ymax,
+            xmax,
+            color=color,
+            thickness=line_thickness,
+            display_str_list=box_to_display_str_map[box],
+            use_normalized_coordinates=use_normalized_coordinates)
+        return box, class_name
+    
+    else:
+        return box, class_name
 
 
 # Load pipeline config and build a detection model
@@ -147,17 +176,20 @@ while True:
     image_np_with_detections = image_np.copy()
     det_classes_with_offset = detections['detection_classes'] + label_id_offset
     im_width, im_height = list(pygui.size())
-
+    print(vis_bool, '#'*40)
     box, class_name = override_visualize_boxes_and_labels_on_image_array(
                 image_np_with_detections,
                 detections['detection_boxes'],
                 det_classes_with_offset,
                 detections['detection_scores'],
+                vis_bool,
                 category_index,
                 use_normalized_coordinates=True,
                 max_boxes_to_draw=1,
-                min_score_thresh=.3,
-                agnostic_mode=False)
+                min_score_thresh=conf_thresh,
+                agnostic_mode=False,
+                )
+
     if len(box) != 0:
         ymin, xmin, ymax, xmax = box
         left, right, top, bottom = (xmin * im_width, xmax * im_width,
@@ -169,8 +201,9 @@ while True:
             pygui.click(button='right')
         if(class_name == 'pinch'):
             pygui.moveTo(round(right), round(top))
-    cv2.imshow('object detection',  cv2.resize(image_np_with_detections, (800, 600)))
+    if vis_bool=='y':
+        cv2.imshow('object detection',  cv2.resize(image_np_with_detections, (800, 600)))
     
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        cap.release()
-        break
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            cap.release()
+            break
