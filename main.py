@@ -176,7 +176,6 @@ while True:
     image_np_with_detections = image_np.copy()
     det_classes_with_offset = detections['detection_classes'] + label_id_offset
     im_width, im_height = list(pygui.size())
-    print(vis_bool, '#'*40)
     box, class_name = override_visualize_boxes_and_labels_on_image_array(
                 image_np_with_detections,
                 detections['detection_boxes'],
@@ -192,6 +191,7 @@ while True:
 
     if len(box) != 0:
         ymin, xmin, ymax, xmax = box
+        print(ymin, xmin, ymax, xmax)
         left, right, top, bottom = (xmin * im_width, xmax * im_width,
                                   ymin * im_height, ymax * im_height)
 
